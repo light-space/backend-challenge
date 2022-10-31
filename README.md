@@ -38,4 +38,10 @@ While designing and implementing the solution the candidate must consider the fo
 1. Each company will be able to define **only** one workflow. Each new invoice will go through that workflow.
 2. A company should be able to modify their workflow at any point.
 
-### The solution must be implemented in Kotlin with full test coverage. Candidates can pick an application server framework (Ktor, Dropwizard, Helidon, Spring Boot, etc.) of their choice. The same goes for library interfacing the DB, although we recommend using Exposed as the Kotlin native library.
+### We are providing a basic framework and libraries with the challenge, as well as the placeholders in the code for candidates to fill. However, both is just a suggestion, and candidates are welcome to try a different setup as well!
+
+### How to build & run
+```sh
+./gradlew clean build
+./gradlew run
+```
