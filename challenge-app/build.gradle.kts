@@ -19,12 +19,17 @@ dependencies {
     implementation(kotlin("stdlib"))
 
     // DB
+    implementation(Libraries.jackson_databind)
+    implementation(Libraries.jackson_kotlin)
+    implementation(Libraries.jackson_zalando)
     implementation(Libraries.exposed)
     implementation(Libraries.sqlite_database)
 
     // Logging
     implementation(Libraries.slf_log4j)
     implementation(Libraries.microutils_logging)
+
+    implementation(Libraries.money)
 
     // Mockk
     testImplementation(Libraries.mockk)

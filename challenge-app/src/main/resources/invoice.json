@@ -1,0 +1,15 @@
+{
+  "id": {
+    "id": "f6fad694-f39a-4043-81aa-48a7ec2250fc"
+  },
+  "companyId": {
+    "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+  },
+  "status": "PENDING",
+  "amount": {
+    "value": 10001.00,
+    "currency": "USD"
+  },
+  "department": "MARKETING",
+  "requitesApproval": true
+}

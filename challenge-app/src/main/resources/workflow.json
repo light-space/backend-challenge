@@ -1,0 +1,180 @@
+[
+  {
+    "id": {
+      "id": "74d14592-3ece-44fb-89a0-75c56486bb7f"
+    },
+    "workflowRule": {
+      "companyId": {
+        "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+      },
+      "type": "EMAIL_NOTIFICATION",
+      "params": {
+        "className": "org.light.challenge.data.models.Notification",
+        "destination": "CMO",
+        "message": "Please approve this invoice"
+      },
+      "onSuccess": null,
+      "onFailure": null,
+      "startStep": false
+    }
+  },
+  {
+    "id": {
+      "id": "1bdcbe11-44f9-4c17-80f0-c01e95f52fa6"
+    },
+    "workflowRule": {
+      "companyId": {
+        "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+      },
+      "type": "EMAIL_NOTIFICATION",
+      "params": {
+        "className": "org.light.challenge.data.models.Notification",
+        "destination": "FinanceManager",
+        "message": "Please approve this invoice"
+      },
+      "onSuccess": null,
+      "onFailure": null,
+      "startStep": false
+    }
+  },
+  {
+    "id": {
+      "id": "2c12ea68-41ea-4643-85b0-2ce3425a1f72"
+    },
+    "workflowRule": {
+      "companyId": {
+        "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+      },
+      "type": "SLACK_NOTIFICATION",
+      "params": {
+        "className": "org.light.challenge.data.models.Notification",
+        "destination": "CFO",
+        "message": "Please approve this invoice"
+      },
+      "onSuccess": null,
+      "onFailure": null,
+      "startStep": false
+    }
+  },
+  {
+    "id": {
+      "id": "a8a1c446-a330-44a6-ae91-aee55fa298df"
+    },
+    "workflowRule": {
+      "companyId": {
+        "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+      },
+      "type": "SLACK_NOTIFICATION",
+      "params": {
+        "className": "org.light.challenge.data.models.Notification",
+        "destination": "FinanceTeamMember",
+        "message": "Please approve this invoice"
+      },
+      "onSuccess": null,
+      "onFailure": null,
+      "startStep": false
+    }
+  },
+  {
+    "id": {
+      "id": "62ae6db0-e2bc-444a-91a8-78eec5506f45"
+    },
+    "workflowRule": {
+      "companyId": {
+        "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+      },
+      "type": "INVOICE_PROPERTY",
+      "params": {
+        "className": "org.light.challenge.data.models.InvoiceProperty",
+        "name": "DEPARTMENT",
+        "value": "MARKETING"
+      },
+      "onSuccess": {
+        "id": "74d14592-3ece-44fb-89a0-75c56486bb7f"
+      },
+      "onFailure": {
+        "id": "2c12ea68-41ea-4643-85b0-2ce3425a1f72"
+      },
+      "startStep": false
+    }
+  },
+  {
+    "id": {
+      "id": "630f3158-4a04-4ba5-8ce4-0d5c7d0e8000"
+    },
+    "workflowRule": {
+      "companyId": {
+        "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+      },
+      "type": "INVOICE_PROPERTY",
+      "params": {
+        "className": "org.light.challenge.data.models.InvoiceProperty",
+        "name": "APPROVAL_REQUIRED",
+        "value": "true"
+      },
+      "onSuccess": {
+        "id": "1bdcbe11-44f9-4c17-80f0-c01e95f52fa6"
+      },
+      "onFailure": {
+        "id": "a8a1c446-a330-44a6-ae91-aee55fa298df"
+      },
+      "startStep": false
+    }
+  },
+  {
+    "id": {
+      "id": "3a24e56d-d32b-42ef-8121-097b5870417b"
+    },
+    "workflowRule": {
+      "companyId": {
+        "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+      },
+      "type": "INVOICE_AMOUNT",
+      "params": {
+        "className": "org.light.challenge.data.models.InvoiceAmount",
+        "lowerAmountLimit": {
+          "value": 5000.00,
+          "currency": "USD"
+        },
+        "lowerAmountLimitInclusive": false,
+        "upperAmountLimit": null,
+        "upperAmountLimitInclusive": null
+      },
+      "onSuccess": {
+        "id": "630f3158-4a04-4ba5-8ce4-0d5c7d0e8000"
+      },
+      "onFailure": {
+        "id": "a8a1c446-a330-44a6-ae91-aee55fa298df"
+      },
+      "startStep": false
+    }
+  },
+  {
+    "id": {
+      "id": "2e7858c8-0925-4ee5-b39c-32cf4a397997"
+    },
+    "workflowRule": {
+      "companyId": {
+        "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+      },
+      "type": "INVOICE_AMOUNT",
+      "params": {
+        "className": "org.light.challenge.data.models.InvoiceAmount",
+        "lowerAmountLimit": {
+          "value": 10000.00,
+          "currency": "USD"
+        },
+        "lowerAmountLimitInclusive": false,
+        "upperAmountLimit": null,
+        "upperAmountLimitInclusive": null
+      },
+      "onSuccess": {
+        "id": "62ae6db0-e2bc-444a-91a8-78eec5506f45"
+      },
+      "onFailure": {
+        "id": "3a24e56d-d32b-42ef-8121-097b5870417b"
+      },
+      "startStep": true
+    }
+  }
+]

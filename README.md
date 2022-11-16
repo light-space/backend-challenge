@@ -40,8 +40,116 @@ While designing and implementing the solution the candidate must consider the fo
 
 ### We are providing a basic framework and libraries with the challenge, as well as the placeholders in the code for candidates to fill. However, both is just a suggestion, and candidates are welcome to try a different setup as well!
 
+
+# Solution
+
 ### How to build & run
+
+* Build project
 ```sh
-./gradlew clean build
-./gradlew run
+  ./gradlew clean build
 ```
+* Run project with default workflow & defualt invoice
+```sh
+  ./gradlew run
+```
+
+* Run project with default workflow but particular invoice
+```sh
+  ./gradlew run --args <path-to-file>/invoice.json
+```
+Invoice format
+```json
+{
+  "id": {
+    "id": "f6fad694-f39a-4043-81aa-48a7ec2250fc"
+  },
+  "companyId": {
+    "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+  },
+  "status": "PENDING",
+  "amount": {
+    "value": 10001.00,
+    "currency": "USD"
+  },
+  "department": "MARKETING",
+  "requitesApproval": true
+}
+```
+
+
+* Run project with particular workflow and invoice
+```sh
+  ./gradlew run --args='<path-to-file>/invoice.json <path-to-file>/workflow.json'
+```
+Workflow step format (you need to provide and array of them)
+```json
+{
+    "id": {
+      "id": "2e7858c8-0925-4ee5-b39c-32cf4a397997"
+    },
+    "workflowRule": {
+      "companyId": {
+        "id": "8c509ee1-8457-4884-a7b4-fc01776dd57c"
+      },
+      "type": "INVOICE_AMOUNT",
+      "params": {
+        "className": "org.light.challenge.data.models.InvoiceAmount",
+        "lowerAmountLimit": {
+          "value": 10000.00,
+          "currency": "USD"
+        },
+        "lowerAmountLimitInclusive": false,
+        "upperAmountLimit": null,
+        "upperAmountLimitInclusive": null
+      },
+      "onSuccess": {
+        "id": "62ae6db0-e2bc-444a-91a8-78eec5506f45"
+      },
+      "onFailure": {
+        "id": "3a24e56d-d32b-42ef-8121-097b5870417b"
+      },
+      "startStep": true
+    }
+  }
+```
+
+There is also a programtic way of defining the workflow. In order to be able to use it you have to modify the
+main of the app to use `storeExampleWorkflow(companyId: CompanyId)` function in line 62 of `App.kt`.
+
+Default invoice and workflow can be found under `challenge-app` resources folder. 
+
+## Implementation decisions
+
+### Workflow rule parameters
+I've decided to store them in the same table leveraging polymorphism and json because having separate them in 
+separate tables could be areal mess. Still, this decision was made under current scenario, if the scenario changes
+this decision should be revisited.
+Eg: if at some point is required to do filtered searches over. In this scenario would make sense to have 
+db columns to improve the performance of the search and the usage of DB resources.
+
+### Use recursion
+I've decided to use recursion because the problem is stated in a recursive way by nature. 
+Would I do the same for a production use case?
+Before going with a recursive algorithm I would consider the dept it can reach. For this case the customer
+can define the workflow so, some security mechanism should be set in place to avoid unpleasant outcomes.
+
+### Rest Api
+I did not implement it, but to allow customers to define workflows and modify them a Rest API would be needed.
+
+### Notification integrations & workflow step
+I took notification integrations as business case and only log them. Even though this sounds naif I wanted to mention it.
+From my understanding this integrations are not so different from each other that is why I hide them behind a single step 
+with a dependency that will take care of the actual integration. If the parameters or something else changes, 
+this decision might need to be revisited.
+
+### Property workflow step
+Sounded to me that what we needed to check was the value of a particular property, that is why I created a single step
+and delegated the actual functionality of knowing how to get that information from the invoice to the configuration of 
+the property.
+
+### Integration tests
+I did not create them because of lack of time but for a production ready code I think it is mandatory because they will 
+not only ensure the code works, they will also ensure that the code will continue working over the changes that will come. 
+
+
