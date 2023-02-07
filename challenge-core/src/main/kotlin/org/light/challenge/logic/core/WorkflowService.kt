@@ -1,5 +1,8 @@
 package org.light.challenge.logic.core
 
+import org.light.challenge.data.*
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.insert
 class WorkflowService {
     // TODO: placeholder - workflow logic here
     enum class Department {
@@ -33,5 +36,17 @@ class WorkflowService {
         val employeeUsername: String,
         val contactMethod: ContactMethod
     )
+
+     fun addRule(rule: Rule) {
+        transaction {
+            Rules.insert {
+                it[department] = rule.department.name
+                it[minAmount] = rule.amountRange.first
+                it[maxAmount] = rule.amountRange.second
+                it[contactMethod] = rule.contactMethod.name
+                it[employeeUsername] = rule.employeeUsername
+            }
+        }
+     }
 
 }
