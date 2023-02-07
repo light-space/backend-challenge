@@ -37,16 +37,22 @@ class WorkflowService {
         val contactMethod: ContactMethod
     )
 
-     fun addRule(rule: Rule) {
-        transaction {
-            Rules.insert {
-                it[department] = rule.department.name
-                it[minAmount] = rule.amountRange.first
-                it[maxAmount] = rule.amountRange.second
-                it[contactMethod] = rule.contactMethod.name
-                it[employeeUsername] = rule.employeeUsername
-            }
-        }
+     fun addRule(rule: Rule): Int {
+        val newRuleId = Rules.insert {
+            it[department] = rule.department.name
+            it[minAmount] = rule.amountRange.first
+            it[maxAmount] = rule.amountRange.second
+            it[contactMethod] = rule.contactMethod.name
+            it[employeeUsername] = rule.employeeUsername
+        } get Rules.id
+
+        return newRuleId
      }
+
+    fun addRuleIdToWorkflow(ruleId: Int) {
+        Workflow.insert {
+            it[ruleIds] = ruleId
+        }
+    }
 
 }
