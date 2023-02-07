@@ -2,7 +2,6 @@ package org.light.challenge.data
 
 // TODO: placeholder - DB tables here
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
 
 object Invoices : Table() {
     val id = integer("id").autoIncrement().primaryKey()
@@ -30,12 +29,4 @@ object Rules : Table() {
 
 object Workflow : Table() {
     val ruleIds = (integer("rule_id") references Rules.id)
-}
-
-fun createTables() {
-    Database.connect("jdbc:sqlite::memory:test?mode=memory&cache=shared", "org.sqlite.JDBC")
-    transaction {
-        addLogger(StdOutSqlLogger)
-        SchemaUtils.create(Invoices, Employees, Rules, Workflow)
-    }
 }
