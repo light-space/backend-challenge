@@ -29,6 +29,7 @@ class TypeHelper {
     data class Rule(
         val department: Department,
         val amountRange: Pair<Double, Double>,
+        val requiresManagerApproval: Boolean,
         val employeeUsername: String,
         val contactMethod: ContactMethod
     )
