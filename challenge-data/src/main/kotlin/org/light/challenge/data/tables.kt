@@ -24,13 +24,18 @@ object Rules : Table() {
     val department = (text("department"))
     val minAmount = double("min_amount")
     val maxAmount = double("max_amount")
+    val contactMethod = text("contact_method")
     val employeeUsername = (text("employee_username") references Employees.username)
+}
+
+object Workflow : Table() {
+    val ruleIds = (integer("rule_id") references Rules.id)
 }
 
 fun createTables() {
     Database.connect("jdbc:sqlite::memory:test?mode=memory&cache=shared", "org.sqlite.JDBC")
     transaction {
         addLogger(StdOutSqlLogger)
-        SchemaUtils.create(Invoices, Employees, Rules)
+        SchemaUtils.create(Invoices, Employees, Rules, Workflow)
     }
 }
