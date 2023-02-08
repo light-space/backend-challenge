@@ -1,5 +1,6 @@
 package org.light.challenge.logic.core
 
+import org.jetbrains.exposed.sql.deleteAll
 import org.light.challenge.data.*
 import org.light.challenge.logic.core.TypeHelper.*
 import org.jetbrains.exposed.sql.insert
@@ -35,6 +36,11 @@ class WorkflowService {
             it[department] = invoice.department.name
             it[requiresManagerApproval] = invoice.requiresManagerApproval
         }
+    }
+
+    fun deleteWorkflow(){
+        RulesTable.deleteAll()
+        WorkflowTable.deleteAll()
     }
 
     fun processInvoice(invoice: Invoice): String {
