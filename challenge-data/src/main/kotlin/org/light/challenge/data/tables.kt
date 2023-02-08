@@ -23,6 +23,7 @@ object RulesTable : Table() {
     val department = (text("department"))
     val minAmount = double("min_amount")
     val maxAmount = double("max_amount")
+    val requiresManagerApproval = bool("requires_manager_approval")
     val contactMethod = text("contact_method")
     val employeeUsername = (text("employee_username") references EmployeesTable.username)
 }
