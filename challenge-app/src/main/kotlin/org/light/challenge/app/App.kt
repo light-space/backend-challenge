@@ -73,7 +73,7 @@ fun main(args: Array<String>) {
                 val contactMethod = typeHelper.toContactMethod(readln())
                 try {
                     transaction(db) {
-                        val ruleId = workflowService.addRule(
+                         workflowService.addRule(
                             Rule(
                                 amountRange = Pair(minAmount, maxAmount),
                                 department = department,
@@ -82,7 +82,6 @@ fun main(args: Array<String>) {
                                 contactMethod = contactMethod
                             )
                         )
-                        workflowService.addRuleIdToWorkflow(ruleId)
                     }
                     println("Rule successfully added into workflow.")
                 } catch(e:Exception) {

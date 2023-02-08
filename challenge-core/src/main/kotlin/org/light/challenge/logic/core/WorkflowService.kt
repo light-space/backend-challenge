@@ -10,7 +10,12 @@ import org.jetbrains.exposed.sql.selectAll
 class WorkflowService {
     // TODO: placeholder - workflow logic here
 
-     fun addRule(rule: Rule): Int {
+    private fun addRuleIdToWorkflow(ruleId: Int) {
+        WorkflowTable.insert {
+            it[ruleIds] = ruleId
+        }
+    }
+     fun addRule(rule: Rule) {
         val newRuleId = RulesTable.insert {
             it[department] = rule.department?.name
             it[minAmount] = rule.amountRange.first
@@ -19,15 +24,8 @@ class WorkflowService {
             it[contactMethod] = rule.contactMethod.name
             it[employeeUsername] = rule.employeeUsername
         } get RulesTable.id
-
-        return newRuleId
+         addRuleIdToWorkflow(newRuleId)
      }
-
-    fun addRuleIdToWorkflow(ruleId: Int) {
-        WorkflowTable.insert {
-            it[ruleIds] = ruleId
-        }
-    }
 
     fun addInvoice(invoice: Invoice) {
         InvoicesTable.insert {
