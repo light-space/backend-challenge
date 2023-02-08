@@ -74,7 +74,7 @@ fun main(args: Array<String>) {
                 }
                 println("Rule successfully included in the workflow, do you wish to enter another rule? [y/n]")
                 val wishToContinue = readln()
-                if(wishToContinue == "y") continue else break;
+                if(wishToContinue == "y") continue else break
             }
         }
     }
