@@ -3,10 +3,12 @@ package org.light.challenge.app
 import org.light.challenge.logic.core.WorkflowService
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.light.challenge.data.*
 import org.light.challenge.logic.core.TypeHelper
 import org.light.challenge.logic.core.TypeHelper.*
+import java.io.File
 
 fun main(args: Array<String>) {
 
@@ -45,10 +47,13 @@ fun main(args: Array<String>) {
                 transaction(db) {
                     workflowService.deleteWorkflow()
                 }
+                transaction(db){close()}
+                File("./memory").delete()
                 println("Workflow successfully deleted.")
                 return
             } catch(e: Exception){
                 println("Error: Something went wrong. Workflow was not deleted.")
+                println("""   Usage: ./gradlew run --args="--delete-workflow"""")
             }
         }
         "--add-rule-to-workflow" -> {
@@ -95,7 +100,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    /*  transaction(db) {
+      transaction(db) {
         val rules = RulesTable.selectAll().toList()
         for (rule in rules) {
             println("ID: ${rule[RulesTable.id]}")
@@ -113,5 +118,5 @@ fun main(args: Array<String>) {
         for (ruleId in workFlow) {
             println("RuleId: ${ruleId[WorkflowTable.ruleIds]}")
         }
-    } */
+    }
 }
