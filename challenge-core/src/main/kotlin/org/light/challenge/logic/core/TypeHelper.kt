@@ -27,9 +27,9 @@ class TypeHelper {
     )
 
     data class Rule(
-        val department: Department?,
-        val amountRange: Pair<Double?, Double?>,
-        val requiresManagerApproval: Boolean?,
+        val department: Department? = null,
+        val amountRange: Pair<Double?, Double?> = Pair(null, null),
+        val requiresManagerApproval: Boolean? = null,
         val employeeUsername: String,
         val contactMethod: ContactMethod
     )
