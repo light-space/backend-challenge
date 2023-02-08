@@ -23,24 +23,32 @@ fun main(args: Array<String>) {
 
     when (args[0]) {
           "--submit-invoice" -> {
-            if(args.size == 4){
+            try {
                 transaction(db) {
                     val sendInvoiceTo = workflowService.processInvoice(
                         Invoice(
                             amount = args[1].toDouble(),
                             department = typeHelper.toDepartment(args[2])!!,
-                            requiresManagerApproval = args[3].toBoolean())
+                            requiresManagerApproval = args[3].toBooleanStrictOrNull()!!
+                        )
                     )
                     println(sendInvoiceTo)
                 }
-            } else {
-                println("""Usage: ./gradlew run --args="--submit-invoice <amount> <department> <managerApproval>"""")
                 return
+            } catch (e: Exception){
+                println("Error: Invoice format or argument type is not correct.")
+                println("""   Usage: ./gradlew run --args="--submit-invoice <amount> <department> <managerApproval>"""")
             }
         }
         "--delete-workflow" -> {
-            transaction(db) {
-                workflowService.deleteWorkflow()
+            try {
+                transaction(db) {
+                    workflowService.deleteWorkflow()
+                }
+                println("Workflow successfully deleted.")
+                return
+            } catch(e: Exception){
+                println("Error: Something went wrong. Workflow was not deleted.")
             }
         }
         "--add-rule-to-workflow" -> {
@@ -58,22 +66,31 @@ fun main(args: Array<String>) {
                 val employeeUsername = readln()
                 println("Contact method: ")
                 val contactMethod = typeHelper.toContactMethod(readln())
-
-                transaction(db) {
-                    val ruleId = workflowService.addRule(
-                        Rule(
-                            amountRange = Pair(minAmount, maxAmount),
-                            department = department,
-                            requiresManagerApproval = requiresManagerApproval,
-                            employeeUsername = employeeUsername,
-                            contactMethod = contactMethod
+                try {
+                    transaction(db) {
+                        val ruleId = workflowService.addRule(
+                            Rule(
+                                amountRange = Pair(minAmount, maxAmount),
+                                department = department,
+                                requiresManagerApproval = requiresManagerApproval,
+                                employeeUsername = employeeUsername,
+                                contactMethod = contactMethod
+                            )
                         )
-                    )
-                    workflowService.addRuleIdToWorkflow(ruleId)
+                        workflowService.addRuleIdToWorkflow(ruleId)
+                    }
+                    println("Rule successfully added into workflow.")
+                } catch(e:Exception) {
+                    println("Error: Last rule could not be added. Make sure you entered the correct value types:")
+                    println("  Minimum amount: Number")
+                    println("  Maximum amount: Number")
+                    println("  Department: [Finance/Marketing]")
+                    println("  Require Manager Approval: [true/false]")
+                    println("  Employee Name: Text")
+                    println("  Contact Method: [email/slack]")
                 }
-                println("Rule successfully included in the workflow, do you wish to enter another rule? [y/n]")
-                val wishToContinue = readln()
-                if(wishToContinue == "y") continue else break
+                println("Do you wish to add another rule? [y/n]")
+                if(readln() == "y") continue else break
             }
         }
     }
