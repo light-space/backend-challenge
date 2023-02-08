@@ -12,7 +12,7 @@ class TypeHelper {
     }
 
     data class Invoice(
-        val id: Int,
+        val id: Int = 0,
         val amount: Double,
         val department: Department,
         val requiresManagerApproval: Boolean
