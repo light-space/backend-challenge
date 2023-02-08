@@ -27,15 +27,17 @@ class TypeHelper {
     )
 
     data class Rule(
-        val department: Department,
-        val amountRange: Pair<Double, Double>,
-        val requiresManagerApproval: Boolean,
+        val department: Department?,
+        val amountRange: Pair<Double?, Double?>,
+        val requiresManagerApproval: Boolean?,
         val employeeUsername: String,
         val contactMethod: ContactMethod
     )
 
-    fun toDepartment(input: String): Department {
-        return Department.valueOf(input.uppercase())
+    fun toDepartment(input: String): Department? {
+        if(input.uppercase() == "FINANCE" || input.uppercase() == "MARKETING")
+            return Department.valueOf(input.uppercase())
+        return null
     }
 
     fun toContactMethod(input: String): ContactMethod {

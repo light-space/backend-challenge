@@ -6,13 +6,14 @@ import org.light.challenge.logic.core.TypeHelper.*
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
+import kotlin.reflect.typeOf
 
 class WorkflowService {
     // TODO: placeholder - workflow logic here
 
      fun addRule(rule: Rule): Int {
         val newRuleId = RulesTable.insert {
-            it[department] = rule.department.name
+            it[department] = rule.department?.name
             it[minAmount] = rule.amountRange.first
             it[maxAmount] = rule.amountRange.second
             it[requiresManagerApproval] = rule.requiresManagerApproval
@@ -49,17 +50,18 @@ class WorkflowService {
 
         for (ruleId in ruleIds) {
             val rule = RulesTable.select { RulesTable.id eq ruleId }.first()
-            val department = Department.valueOf(rule[RulesTable.department])
+            val department = rule[RulesTable.department]?.let { Department.valueOf(it) }
             val minAmount = rule[RulesTable.minAmount]
             val maxAmount = rule[RulesTable.maxAmount]
             val requiresManagementApproval = rule[RulesTable.requiresManagerApproval]
             val contactMethod = ContactMethod.valueOf(rule[RulesTable.contactMethod])
             val employeeUsername = rule[RulesTable.employeeUsername]
 
-            if (invoice.department === department &&
-                invoice.amount in minAmount..maxAmount &&
-                invoice.requiresManagerApproval == requiresManagementApproval
-            ) {
+            if ( (department == null || invoice.department === department) &&
+                 (minAmount == null || invoice.amount >= minAmount) &&
+                 (maxAmount == null || invoice.amount <= maxAmount) &&
+                 (requiresManagementApproval == null || invoice.requiresManagerApproval == requiresManagementApproval)
+            ){
                 return "Send a message via $contactMethod to $employeeUsername"
             }
         }
