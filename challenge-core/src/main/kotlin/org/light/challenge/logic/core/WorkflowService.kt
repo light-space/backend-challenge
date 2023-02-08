@@ -57,7 +57,7 @@ class WorkflowService {
             val employeeUsername = rule[RulesTable.employeeUsername]
 
             if ( (department == null || invoice.department === department) &&
-                 (minAmount == null || invoice.amount >= minAmount) &&
+                 (minAmount == null || invoice.amount > minAmount) &&
                  (maxAmount == null || invoice.amount <= maxAmount) &&
                  (requiresManagementApproval == null || invoice.requiresManagerApproval == requiresManagementApproval)
             ){
