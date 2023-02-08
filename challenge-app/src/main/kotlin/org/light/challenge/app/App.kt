@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
                     val sendInvoiceTo = workflowService.processInvoice(
                         Invoice(
                             amount = args[1].toDouble(),
-                            department = typeHelper.toDepartment(args[2]),
+                            department = typeHelper.toDepartment(args[2])!!,
                             requiresManagerApproval = args[3].toBoolean())
                     )
                     println(sendInvoiceTo)
@@ -48,9 +48,9 @@ fun main(args: Array<String>) {
             while(true) {
                 println("Enter the next rule in the workflow. Press enter if you wish to skip a constraint.")
                 println("Minimum amount: ")
-                val minAmount = readln().toDouble()
+                val minAmount = readln().toDoubleOrNull()
                 println("Maximum amount: ")
-                val maxAmount = readln().toDouble()
+                val maxAmount = readln().toDoubleOrNull()
                 println("Department: ")
                 val department = typeHelper.toDepartment(readln())
                 println("Requires Manager Approval [true / false]: ")
