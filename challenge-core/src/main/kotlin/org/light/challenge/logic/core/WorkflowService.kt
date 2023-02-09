@@ -42,7 +42,7 @@ class WorkflowService {
         addEmployee( Employee("jsanders", "Jonathan Sanders", "CMO", "jonathan@light.inc", "jonathan" ) )
         addEmployee( Employee("fkozjak", "Filip Kozjak", "CFO", "filip@light.inc", "filip" ) )
         addEmployee( Employee("jcop", "Jelena Cop", "Finance Manager", "jelena@light.inc", "jelena" ) )
-        addEmployee( Employee("meetsoon", "Meet Soon", "Finance Member", "hope.to.meet.soon@light.inc", "meetsoon" ) )
+        addEmployee( Employee("meetsoon", "Meeting Soon", "Finance Member", "hope.to.meet.soon@light.inc", "hope.to.meet.soon" ) )
     }
 
     fun deleteEmployeeTable() {
@@ -80,7 +80,7 @@ class WorkflowService {
 
     fun processInvoice(invoice: Invoice): String {
         val matchedRule = findMatchingRuleQuery(invoice)
-        val invoiceId = addInvoice(invoice, matchedRule?.get(EmployeesTable.username) ?: "noUserFound")
+        val invoiceId = addInvoice(invoice, matchedRule?.get(EmployeesTable.username) ?: "jsanders")
         if(matchedRule != null) {
             return "${matchedRule[WorkflowTable.contactMethod]}, Sending approval request for " +
                    "invoice #$invoiceId to ${matchedRule[EmployeesTable.name]}.\n" +
@@ -88,6 +88,6 @@ class WorkflowService {
                       else "Email: ${matchedRule[EmployeesTable.email]}"}\n" +
                    "Role: ${matchedRule[EmployeesTable.role]}"
         }
-        return "Warning: This invoice did not match any rule of the workflow. Sending approval request to default employee."
+        return "Warning: This invoice did not match any rule of the workflow. Sending approval request to Jonathan Sanders."
     }
 }

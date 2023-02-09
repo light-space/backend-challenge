@@ -168,8 +168,8 @@ class WorkflowServiceTest {
 
             transaction(db) {
                 val expectedResult =
-                    "SLACK, Sending approval request for invoice #1 to Meet Soon.\n" +
-                    "Slack user: meetsoon\nRole: Finance Member"
+                    "SLACK, Sending approval request for invoice #1 to Meeting Soon.\n" +
+                    "Slack user: hope.to.meet.soon\nRole: Finance Member"
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 400.0,
                     department = Department.MARKETING,
@@ -240,8 +240,8 @@ class WorkflowServiceTest {
 
             transaction(db) {
                 val expectedResult =
-                    "SLACK, Sending approval request for invoice #1 to Meet Soon.\n" +
-                    "Slack user: meetsoon\nRole: Finance Member"
+                    "SLACK, Sending approval request for invoice #1 to Meeting Soon.\n" +
+                    "Slack user: hope.to.meet.soon\nRole: Finance Member"
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 5000.0,
                     department = Department.MARKETING,
