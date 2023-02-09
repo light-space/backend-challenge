@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
     val db = Database.connect("jdbc:sqlite:memory:test?mode=memory&cache=shared", "org.sqlite.JDBC")
 
     transaction(db) {
-        SchemaUtils.create(EmployeesTable, RulesTable, WorkflowTable)
+        SchemaUtils.create(EmployeesTable, WorkflowTable)
     }
     when (args[0]) {
           "--submit-invoice" -> {

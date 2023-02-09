@@ -17,7 +17,7 @@ object EmployeesTable : Table() {
     val slack = text("slack")
 }
 
-object RulesTable : Table() {
+object WorkflowTable : Table() {
     val id = integer("id").autoIncrement().primaryKey()
     val department = (text("department")).nullable()
     val minAmount = double("min_amount").nullable()
@@ -25,8 +25,4 @@ object RulesTable : Table() {
     val requiresManagerApproval = bool("requires_manager_approval").nullable()
     val contactMethod = text("contact_method")
     val employeeUsername = (text("employee_username") references EmployeesTable.username)
-}
-
-object WorkflowTable : Table() {
-    val ruleIds = (integer("rule_id") references RulesTable.id)
 }

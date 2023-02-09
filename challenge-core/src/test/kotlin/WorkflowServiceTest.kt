@@ -18,13 +18,13 @@ class WorkflowServiceTest {
 
     private fun createDb(){
         transaction(db) {
-            SchemaUtils.create(EmployeesTable, RulesTable, WorkflowTable, InvoicesTable)
+            SchemaUtils.create(EmployeesTable, WorkflowTable, InvoicesTable)
         }
     }
 
     private fun deleteDb(){
         transaction(db) {
-            SchemaUtils.drop(EmployeesTable, RulesTable, WorkflowTable, InvoicesTable)
+            SchemaUtils.drop(EmployeesTable, WorkflowTable, InvoicesTable)
         }
     }
     @AfterAll
@@ -54,8 +54,8 @@ class WorkflowServiceTest {
             val expectedResult = index
             transaction(db){
                 WorkflowService().addRule(rule)
-                val lastRow = RulesTable.selectAll().orderBy(RulesTable.id to SortOrder.DESC).first()
-                val result = lastRow[RulesTable.id]
+                val lastRow = WorkflowTable.selectAll().orderBy(WorkflowTable.id to SortOrder.DESC).first()
+                val result = lastRow[WorkflowTable.id]
                 assertEquals(expectedResult, result)
             }
             ++index
