@@ -23,6 +23,7 @@ fun main(args: Array<String>) {
 
     transaction(db) {
         SchemaUtils.create(EmployeesTable, WorkflowTable)
+        WorkflowService().generateEmployeeTable()
     }
     when (args[0]) {
           "--submit-invoice" -> {
@@ -41,7 +42,6 @@ fun main(args: Array<String>) {
                 println("Error: Invoice format or argument type is not correct.")
                 println("""   Usage: ./gradlew run --args="--submit-invoice <amount> <department> <manager_approval>"""")
             }
-            return
           }
         "--delete-workflow" -> {
             try {
@@ -56,7 +56,6 @@ fun main(args: Array<String>) {
                 println("Error: Something went wrong. Workflow was not deleted.")
                 println("""   Usage: ./gradlew run --args="--delete-workflow"""")
             }
-            return
         }
         "--add-rule-to-workflow" -> {
             while(true) {
@@ -98,7 +97,6 @@ fun main(args: Array<String>) {
                 println("Do you wish to add another rule? [y/n]")
                 if(readln() == "y") continue else break
             }
-            return
         }
         "--print-workflow" -> {
             try{
@@ -109,7 +107,6 @@ fun main(args: Array<String>) {
                 println("Error: The workflow could not be printed.")
                 println("""   Usage: ./gradlew run --args="--print-workflow"""")
             }
-            return
         }
         else -> {
             println("""Error: Unknown command line option "${args[0]}". Valid options are:""")
@@ -118,5 +115,8 @@ fun main(args: Array<String>) {
             println("  --delete-workflow")
             println("  --print-workflow")
         }
+    }
+    transaction(db) {
+        WorkflowService().deleteEmployeeTable()
     }
 }

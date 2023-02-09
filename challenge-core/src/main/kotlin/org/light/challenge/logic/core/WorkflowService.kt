@@ -5,22 +5,26 @@ import org.light.challenge.data.*
 
 class WorkflowService {
 
-    private fun addRuleIdToWorkflow(ruleId: Int) {
-        WorkflowTable.insert {
-            it[ruleIds] = ruleId
-        }
-    }
      fun addRule(rule: Rule) {
-        val newRuleId = RulesTable.insert {
+         WorkflowTable.insert {
             it[department] = rule.department?.name
             it[minAmount] = rule.amountRange.first
             it[maxAmount] = rule.amountRange.second
             it[requiresManagerApproval] = rule.requiresManagerApproval
             it[contactMethod] = rule.contactMethod.name
             it[employeeUsername] = rule.employeeUsername
-        } get RulesTable.id
-         addRuleIdToWorkflow(newRuleId)
+        }
      }
+
+    private fun addEmployee(employee: Employee) {
+        EmployeesTable.insert {
+            it[username] = employee.username
+            it[name] = employee.name
+            it[role] = employee.role
+            it[email] = employee.email
+            it[slack] = employee.slack
+        }
+    }
 
     fun addInvoice(invoice: Invoice) {
         InvoicesTable.insert {
@@ -30,36 +34,52 @@ class WorkflowService {
             it[requiresManagerApproval] = invoice.requiresManagerApproval
         }
     }
+    fun generateEmployeeTable() {
+        addEmployee( Employee("lsimon", "Lluis Simon", "Finance Member", "lluis.simon.92@gmail.com", "lluis.simon.92" ) )
+        addEmployee( Employee("jsanders", "Jonathan Sanders", "CMO", "jonathan@light.inc", "jonathan" ) )
+        addEmployee( Employee("fkozjak", "Filip Kozjak", "CFO", "filip@light.inc", "filip" ) )
+        addEmployee( Employee("jcop", "Jelena Cop", "Finance Manager", "jelena@light.inc", "jelena" ) )
+        addEmployee( Employee("meetsoon", "Meet Soon", "Finance Member", "hope.to.meet.soon@light.inc", "meetsoon" ) )
+    }
+
+    fun deleteEmployeeTable() {
+        EmployeesTable.deleteAll()
+    }
 
     fun deleteWorkflow(){
-        RulesTable.deleteAll()
         WorkflowTable.deleteAll()
     }
 
     fun printWorkflow(){
-        val rules = RulesTable.selectAll().toList()
-        println("${RulesTable.id.name} | ${RulesTable.department.name} | ${RulesTable.minAmount.name} | " +
-                "${RulesTable.maxAmount.name} | ${RulesTable.requiresManagerApproval.name} | " +
-                "${RulesTable.contactMethod.name} | ${RulesTable.employeeUsername.name}")
+        val rules = WorkflowTable.selectAll().toList()
+        println("${WorkflowTable.id.name} | ${WorkflowTable.department.name} | ${WorkflowTable.minAmount.name} | " +
+                "${WorkflowTable.maxAmount.name} | ${WorkflowTable.requiresManagerApproval.name} | " +
+                "${WorkflowTable.contactMethod.name} | ${WorkflowTable.employeeUsername.name}")
         for (rule in rules) {
             println()
-            println("${rule[RulesTable.id]} | ${rule[RulesTable.department]} | ${rule[RulesTable.minAmount]} | " +
-                    "${rule[RulesTable.maxAmount]} | ${rule[RulesTable.requiresManagerApproval]} | " +
-                    "${rule[RulesTable.contactMethod]} | ${rule[RulesTable.employeeUsername]}")
+            println("${rule[WorkflowTable.id]} | ${rule[WorkflowTable.department]} | ${rule[WorkflowTable.minAmount]} | " +
+                    "${rule[WorkflowTable.maxAmount]} | ${rule[WorkflowTable.requiresManagerApproval]} | " +
+                    "${rule[WorkflowTable.contactMethod]} | ${rule[WorkflowTable.employeeUsername]}")
             println()
         }
     }
 
-    fun processInvoice(invoice: Invoice): String {
-        val matchedRule = RulesTable.select {
-            (RulesTable.department eq invoice.department.name or RulesTable.department.isNull()) and
-            (RulesTable.minAmount less  invoice.amount or RulesTable.minAmount.isNull()) and
-            (RulesTable.maxAmount greaterEq  invoice.amount or RulesTable.maxAmount.isNull()) and
-            (RulesTable.requiresManagerApproval eq invoice.requiresManagerApproval or RulesTable.requiresManagerApproval.isNull())
-        }.firstOrNull()
+    private fun findMatchingRuleQuery(invoice: Invoice): ResultRow? {
+        val totalTable = (EmployeesTable innerJoin WorkflowTable)
+        return(
+            totalTable.select {
+                (WorkflowTable.department eq invoice.department.name or WorkflowTable.department.isNull()) and
+                (WorkflowTable.minAmount less  invoice.amount or WorkflowTable.minAmount.isNull()) and
+                (WorkflowTable.maxAmount greaterEq  invoice.amount or WorkflowTable.maxAmount.isNull()) and
+                (WorkflowTable.requiresManagerApproval eq invoice.requiresManagerApproval or WorkflowTable.requiresManagerApproval.isNull())
+            }.firstOrNull()
+    )}
 
-        if(matchedRule != null){
-            return "Send a message via ${matchedRule[RulesTable.contactMethod]} to ${matchedRule[RulesTable.employeeUsername]}"
+    fun processInvoice(invoice: Invoice): String {
+        val matchedRule = findMatchingRuleQuery(invoice)
+        println((EmployeesTable innerJoin WorkflowTable).selectAll().toList())
+        if(matchedRule != null) {
+            return ""
         }
         return "Warning: This invoice did not match with any rule of the workflow. Sending approval request to default employee."
     }
