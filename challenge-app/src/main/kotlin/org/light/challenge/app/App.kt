@@ -10,12 +10,16 @@ import java.io.File
 
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
-        println("Error: Please provide arguments. Valid options are")
-        println("  --submit-invoice <amount[Double]> <department[MARKETING/FINANCE]> <manager_approval[Boolean]>")
-        println("  --add-rule-to-workflow")
-        println("  --delete-workflow")
-        println("  --print-workflow")
-        println("""  Usage: ./gradlew run --args="--option arg1 arg2 .... """")
+        println(
+            """
+            Error: Please provide arguments. Valid options are:
+              --submit-invoice <amount[Double]> <department[MARKETING/FINANCE]> <manager_approval[Boolean]>
+              --add-rule-to-workflow
+              --delete-workflow
+              --print-workflow
+              Usage: ./gradlew run --args="--option arg1 arg2 .... "
+            """
+        )
         return
     }
     // in-memory DB
@@ -86,13 +90,17 @@ fun main(args: Array<String>) {
                     }
                     println("Rule successfully added into workflow.")
                 } catch(e:Exception) {
-                    println("Error: Last rule could not be added. Make sure you entered the correct value types:")
-                    println("  Minimum amount: Number")
-                    println("  Maximum amount: Number")
-                    println("  Department: [Finance/Marketing]")
-                    println("  Require Manager Approval: [true/false]")
-                    println("  Employee Name: Text")
-                    println("  Contact Method: [email/slack]")
+                    println(
+                        """
+                        Error: Last rule could not be added. Make sure you entered the correct value types:
+                          Minimum amount: Number
+                          Maximum amount: Number
+                          Department: [Finance/Marketing]
+                          Require Manager Approval: [true/false]
+                          Employee Name: Text
+                          Contact Method: [email/slack]
+                        """
+                    )
                 }
                 println("Do you wish to add another rule? [y/n]")
                 if(readln() == "y") continue else break
@@ -109,11 +117,15 @@ fun main(args: Array<String>) {
             }
         }
         else -> {
-            println("""Error: Unknown command line option "${args[0]}". Valid options are:""")
-            println("  --submit-invoice <amount[Double]> <department[MARKETING/FINANCE]> <manager_approval[Boolean]>")
-            println("  --add-rule-to-workflow")
-            println("  --delete-workflow")
-            println("  --print-workflow")
+            println(
+                """
+                Error: Unknown command line option "${args[0]}". Valid options are:
+                  --submit-invoice <amount[Double]> <department[MARKETING/FINANCE]> <manager_approval[Boolean]>
+                  --add-rule-to-workflow
+                  --delete-workflow
+                  --print-workflow
+                """"
+            )
         }
     }
     transaction(db) {
