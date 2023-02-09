@@ -26,13 +26,13 @@ class WorkflowService {
         }
     }
 
-    fun addInvoice(invoice: Invoice) {
-        InvoicesTable.insert {
-            it[id] = invoice.id
+    fun addInvoice(invoice: Invoice): Int {
+        val invoiceId = InvoicesTable.insert {
             it[amount] = invoice.amount
             it[department] = invoice.department.name
             it[requiresManagerApproval] = invoice.requiresManagerApproval
-        }
+        } get InvoicesTable.id
+        return invoiceId
     }
     fun generateEmployeeTable() {
         addEmployee( Employee("lsimon", "Lluis Simon", "Finance Member", "lluis.simon.92@gmail.com", "lluis.simon.92" ) )
@@ -77,10 +77,14 @@ class WorkflowService {
 
     fun processInvoice(invoice: Invoice): String {
         val matchedRule = findMatchingRuleQuery(invoice)
-        println((EmployeesTable innerJoin WorkflowTable).selectAll().toList())
+        val invoiceId = addInvoice(invoice)
         if(matchedRule != null) {
-            return ""
+            return "${matchedRule[WorkflowTable.contactMethod]}, Sending approval request for " +
+                    "invoice #$invoiceId to ${matchedRule[EmployeesTable.name]}.\n" +
+                   "${if(matchedRule[WorkflowTable.contactMethod] == "SLACK") "Slack user: ${matchedRule[EmployeesTable.slack]}"
+                      else "Email: ${matchedRule[EmployeesTable.email]}"}\n" +
+                   "Role: ${matchedRule[EmployeesTable.role]}"
         }
-        return "Warning: This invoice did not match with any rule of the workflow. Sending approval request to default employee."
+        return "Warning: This invoice did not match any rule of the workflow. Sending approval request to default employee."
     }
 }
