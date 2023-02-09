@@ -7,19 +7,19 @@ Each rule is responsible for sending an approval request via email or slack to t
 ## Features
 
 - The whole application can be executed from the command line
-- Submit an invoice via command line by passing invoice's amount, department, and whether a manager approval is required as input fields
+- Submit an invoice via command line by passing invoice's amount, department, and whether a manager approval is required as arguments
 - Delete the current Workflow
 - Add rules to the current Workflow
 - Print the current Workflow
 - Support two ways to give approval: Slack and Email
-- Five employees are included in the database at init.
+- Five employees are included in the database
 
 ## Limitations
 
-- User can not modify previously entered rules. Need to delete the workflow and create it again.
+- User cannot modify previously entered rules, but needs to delete the workflow and create it again.
 - Error messages are a bit general. Some errors might not be handled.
 - Limited test coverage (only for showcasing)
-- Employees can not be added or removed
+- Employees cannot be added or removed
 
 ## Command Line Executables
 
@@ -67,13 +67,14 @@ via the specified contact method.
       ```sh
       ./gradlew run --args="--print-workflow"
       ```
-If none of these commands is entered, the executable returns and error message 
-and lists the available options. If one of these commands fail to execute,
+If none of these commands is entered, the executable returns an error message 
+and lists the available options. If one of these commands fails to execute,
 an error message is printed informing of the correct usage.
 
 ## Database model
 
 ![database_model](light-be-challenge-schema.png)
+
 Fig. 1: Database model of the solution.
 
 The database model of the solution is shown in Fig. 1. It consists of three tables: 
@@ -124,6 +125,7 @@ and should be available for testing. These are some suggested tests and the expe
 ```
 
 ![code_exercise_diagram (2)](https://user-images.githubusercontent.com/112865589/191920630-6c4e8f8e-a8d9-42c2-b31e-ab2c881ed297.jpg)
+
 Fig. 2: Initial Workflow.
 
 ## Build and Run
