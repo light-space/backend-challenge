@@ -137,7 +137,9 @@ class WorkflowServiceTest {
             val result = WorkflowService().processInvoice(Invoice(
                 amount = 12000.0,
                 department = Department.MARKETING,
-                requiresManagerApproval = false
+                requiresManagerApproval = false,
+                approved = false,
+                approverUsername = "jsanders"
             ))
             assertEquals(expectedResult, result)
             }
@@ -153,7 +155,9 @@ class WorkflowServiceTest {
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 12000.0,
                     department = Department.FINANCE,
-                    requiresManagerApproval = true
+                    requiresManagerApproval = true,
+                    approved = false,
+                    approverUsername = "fkozjak"
                 ))
                 assertEquals(expectedResult, result)
             }
@@ -169,7 +173,9 @@ class WorkflowServiceTest {
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 400.0,
                     department = Department.MARKETING,
-                    requiresManagerApproval = false
+                    requiresManagerApproval = false,
+                    approved = false,
+                    approverUsername = "meetsoon"
                 ))
                 assertEquals(expectedResult, result)
             }
@@ -185,7 +191,9 @@ class WorkflowServiceTest {
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 7000.0,
                     department = Department.MARKETING,
-                    requiresManagerApproval = false
+                    requiresManagerApproval = false,
+                    approved = false,
+                    approverUsername = "lsimon"
                 ))
                 assertEquals(expectedResult, result)
             }
@@ -201,7 +209,9 @@ class WorkflowServiceTest {
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 7000.0,
                     department = Department.FINANCE,
-                    requiresManagerApproval = true
+                    requiresManagerApproval = true,
+                    approved = false,
+                    approverUsername = "jcop"
                 ))
                 assertEquals(expectedResult, result)
             }
@@ -217,7 +227,9 @@ class WorkflowServiceTest {
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 10000.0,
                     department = Department.MARKETING,
-                    requiresManagerApproval = true
+                    requiresManagerApproval = true,
+                    approved = false,
+                    approverUsername = "jcop"
                 ))
                 assertEquals(expectedResult, result)
             }
@@ -233,7 +245,9 @@ class WorkflowServiceTest {
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 5000.0,
                     department = Department.MARKETING,
-                    requiresManagerApproval = true
+                    requiresManagerApproval = true,
+                    approved = false,
+                    approverUsername = "meetsoon"
                 ))
                 assertEquals(expectedResult, result)
             }

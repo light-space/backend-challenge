@@ -13,7 +13,9 @@ enum class ContactMethod {
 data class Invoice(
     val amount: Double,
     val department: Department,
-    val requiresManagerApproval: Boolean
+    val requiresManagerApproval: Boolean,
+    val approved: Boolean? = null,
+    val approverUsername: String? = null
 )
 
 data class Employee(

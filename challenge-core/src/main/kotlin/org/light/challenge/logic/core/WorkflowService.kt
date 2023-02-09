@@ -26,14 +26,17 @@ class WorkflowService {
         }
     }
 
-    fun addInvoice(invoice: Invoice): Int {
+    private fun addInvoice(invoice: Invoice, approver: String): Int {
         val invoiceId = InvoicesTable.insert {
             it[amount] = invoice.amount
             it[department] = invoice.department.name
             it[requiresManagerApproval] = invoice.requiresManagerApproval
+            it[approved] = false
+            it[approverUsername] = approver
         } get InvoicesTable.id
         return invoiceId
     }
+
     fun generateEmployeeTable() {
         addEmployee( Employee("lsimon", "Lluis Simon", "Finance Member", "lluis.simon.92@gmail.com", "lluis.simon.92" ) )
         addEmployee( Employee("jsanders", "Jonathan Sanders", "CMO", "jonathan@light.inc", "jonathan" ) )
@@ -77,10 +80,10 @@ class WorkflowService {
 
     fun processInvoice(invoice: Invoice): String {
         val matchedRule = findMatchingRuleQuery(invoice)
-        val invoiceId = addInvoice(invoice)
+        val invoiceId = addInvoice(invoice, matchedRule?.get(EmployeesTable.username) ?: "noUserFound")
         if(matchedRule != null) {
             return "${matchedRule[WorkflowTable.contactMethod]}, Sending approval request for " +
-                    "invoice #$invoiceId to ${matchedRule[EmployeesTable.name]}.\n" +
+                   "invoice #$invoiceId to ${matchedRule[EmployeesTable.name]}.\n" +
                    "${if(matchedRule[WorkflowTable.contactMethod] == "SLACK") "Slack user: ${matchedRule[EmployeesTable.slack]}"
                       else "Email: ${matchedRule[EmployeesTable.email]}"}\n" +
                    "Role: ${matchedRule[EmployeesTable.role]}"
