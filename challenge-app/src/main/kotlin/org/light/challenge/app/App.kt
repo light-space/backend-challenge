@@ -18,19 +18,15 @@ fun main(args: Array<String>) {
     transaction(db) {
         SchemaUtils.create(EmployeesTable, RulesTable, WorkflowTable)
     }
-
-    val workflowService = WorkflowService()
-    val typeHelper = TypeHelper()
     // TODO: placeholder - start the program here
-
     when (args[0]) {
           "--submit-invoice" -> {
             try {
                 transaction(db) {
-                    val sendInvoiceTo = workflowService.processInvoice(
+                    val sendInvoiceTo = WorkflowService().processInvoice(
                         Invoice(
                             amount = args[1].toDouble(),
-                            department = typeHelper.toDepartment(args[2])!!,
+                            department = TypeHelper().toDepartment(args[2])!!,
                             requiresManagerApproval = args[3].toBooleanStrictOrNull()!!
                         )
                     )
@@ -45,7 +41,7 @@ fun main(args: Array<String>) {
         "--delete-workflow" -> {
             try {
                 transaction(db) {
-                    workflowService.deleteWorkflow()
+                    WorkflowService().deleteWorkflow()
                 }
                 transaction(db){close()}
                 File("./memory").delete()
@@ -64,16 +60,16 @@ fun main(args: Array<String>) {
                 println("Maximum amount: ")
                 val maxAmount = readln().toDoubleOrNull()
                 println("Department: ")
-                val department = typeHelper.toDepartment(readln())
+                val department = TypeHelper().toDepartment(readln())
                 println("Requires Manager Approval [true / false]: ")
                 val requiresManagerApproval = readln().toBooleanStrictOrNull()
                 println("Employee username: ")
                 val employeeUsername = readln()
                 println("Contact method: ")
-                val contactMethod = typeHelper.toContactMethod(readln())
+                val contactMethod = TypeHelper().toContactMethod(readln())
                 try {
                     transaction(db) {
-                         workflowService.addRule(
+                         WorkflowService().addRule(
                             Rule(
                                 amountRange = Pair(minAmount, maxAmount),
                                 department = department,
