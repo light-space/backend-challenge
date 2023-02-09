@@ -8,7 +8,7 @@ object InvoicesTable : Table() {
     val department = text("department")
     val requiresManagerApproval = bool("requires_manager_approval")
     val approved = bool("approved")
-    val approverUsername = text("approver_username")
+    val approverUsername = text("approver_username") //made up "approver" term to be concise
 }
 
 object EmployeesTable : Table() {

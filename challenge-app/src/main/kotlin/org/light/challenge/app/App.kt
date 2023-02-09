@@ -51,7 +51,7 @@ fun main(args: Array<String>) {
             try {
                 transaction(db) {
                     WorkflowService().deleteWorkflow()
-                    WorkflowService().deleteEmployeeTable()
+                    WorkflowService().deleteEmployeeTable() //Included this to have a method to delete Employee table in case program gets corrupted (workaround)
                 }
                 transaction(db){close()}
                 File("./memory").delete()
@@ -77,10 +77,10 @@ fun main(args: Array<String>) {
                 println("Requires Manager Approval [true/false]: ")
                 val requiresManagerApproval = readln().toBooleanStrictOrNull()
                 println(" $requiresManagerApproval")
-                println("Username of the employee to approve: ")
+                println("Username of the employee to approve (REQUIRED): ")
                 val employeeUsername = readln()
                 println(" $employeeUsername")
-                println("Contact method [email/slack]: ")
+                println("Contact method [email/slack] (REQUIRED): ")
                 val contactMethod = toContactMethod(readln())
                 println(" $contactMethod")
                 try {
