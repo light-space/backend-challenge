@@ -27,12 +27,12 @@ fun main(args: Array<String>) {
 
     transaction(db) {
         SchemaUtils.create(EmployeesTable, WorkflowTable, InvoicesTable)
-        WorkflowService().generateEmployeeTable()
     }
     when (args[0]) {
           "--submit-invoice" -> {
             try {
                 transaction(db) {
+                    WorkflowService().generateEmployeeTable()
                     val sendInvoiceTo = WorkflowService().processInvoice(
                         Invoice(
                             amount = args[1].toDouble(),
@@ -51,6 +51,7 @@ fun main(args: Array<String>) {
             try {
                 transaction(db) {
                     WorkflowService().deleteWorkflow()
+                    WorkflowService().deleteEmployeeTable()
                 }
                 transaction(db){close()}
                 File("./memory").delete()
@@ -66,16 +67,22 @@ fun main(args: Array<String>) {
                 println("Enter the next rule in the workflow. Press enter if you wish to skip a constraint.")
                 println("Minimum amount: ")
                 val minAmount = readln().toDoubleOrNull()
+                println(" $minAmount")
                 println("Maximum amount: ")
                 val maxAmount = readln().toDoubleOrNull()
-                println("Department: ")
+                println(" $maxAmount")
+                println("Department [finance/marketing]: ")
                 val department = toDepartment(readln())
-                println("Requires Manager Approval [true / false]: ")
+                println(" $department")
+                println("Requires Manager Approval [true/false]: ")
                 val requiresManagerApproval = readln().toBooleanStrictOrNull()
-                println("Employee username: ")
+                println(" $requiresManagerApproval")
+                println("Username of the employee to approve: ")
                 val employeeUsername = readln()
-                println("Contact method: ")
+                println(" $employeeUsername")
+                println("Contact method [email/slack]: ")
                 val contactMethod = toContactMethod(readln())
+                println(" $contactMethod")
                 try {
                     transaction(db) {
                          WorkflowService().addRule(
