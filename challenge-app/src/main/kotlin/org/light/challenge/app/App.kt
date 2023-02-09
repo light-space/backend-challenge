@@ -6,8 +6,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.light.challenge.data.*
-import org.light.challenge.logic.core.TypeHelper
-import org.light.challenge.logic.core.TypeHelper.*
+import org.light.challenge.logic.core.*
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -18,7 +17,6 @@ fun main(args: Array<String>) {
     transaction(db) {
         SchemaUtils.create(EmployeesTable, RulesTable, WorkflowTable)
     }
-    // TODO: placeholder - start the program here
     when (args[0]) {
           "--submit-invoice" -> {
             try {
@@ -26,7 +24,7 @@ fun main(args: Array<String>) {
                     val sendInvoiceTo = WorkflowService().processInvoice(
                         Invoice(
                             amount = args[1].toDouble(),
-                            department = TypeHelper().toDepartment(args[2])!!,
+                            department = toDepartment(args[2])!!,
                             requiresManagerApproval = args[3].toBooleanStrictOrNull()!!
                         )
                     )
@@ -60,13 +58,13 @@ fun main(args: Array<String>) {
                 println("Maximum amount: ")
                 val maxAmount = readln().toDoubleOrNull()
                 println("Department: ")
-                val department = TypeHelper().toDepartment(readln())
+                val department = toDepartment(readln())
                 println("Requires Manager Approval [true / false]: ")
                 val requiresManagerApproval = readln().toBooleanStrictOrNull()
                 println("Employee username: ")
                 val employeeUsername = readln()
                 println("Contact method: ")
-                val contactMethod = TypeHelper().toContactMethod(readln())
+                val contactMethod = toContactMethod(readln())
                 try {
                     transaction(db) {
                          WorkflowService().addRule(

@@ -2,7 +2,7 @@ package org.light.challenge.logic.core
 
 import org.jetbrains.exposed.sql.deleteAll
 import org.light.challenge.data.*
-import org.light.challenge.logic.core.TypeHelper.*
+import org.light.challenge.logic.core.*
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll

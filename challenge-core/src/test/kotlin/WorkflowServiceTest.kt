@@ -1,18 +1,15 @@
-import org.jetbrains.exposed.sql.Database
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
-import org.light.challenge.logic.core.TypeHelper
-import org.light.challenge.logic.core.WorkflowService
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.TestInstance
-import org.light.challenge.data.EmployeesTable
-import org.light.challenge.data.RulesTable
-import org.light.challenge.data.WorkflowTable
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
+import org.light.challenge.data.*
+import org.light.challenge.logic.core.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class WorkflowServiceTest {
@@ -21,13 +18,13 @@ class WorkflowServiceTest {
 
     private fun createDb(){
         transaction(db) {
-            SchemaUtils.create(EmployeesTable, RulesTable, WorkflowTable)
+            SchemaUtils.create(EmployeesTable, RulesTable, WorkflowTable, InvoicesTable)
         }
     }
 
     private fun deleteDb(){
         transaction(db) {
-            SchemaUtils.drop(EmployeesTable, RulesTable, WorkflowTable)
+            SchemaUtils.drop(EmployeesTable, RulesTable, WorkflowTable, InvoicesTable)
         }
     }
     @AfterAll
@@ -47,12 +44,12 @@ class WorkflowServiceTest {
         private var index = 1
         @RepeatedTest(50)
         fun `test addRule return value`() {
-            val rule = TypeHelper.Rule(
+            val rule = Rule(
                 amountRange = Pair(100.0, null),
-                department = TypeHelper.Department.FINANCE,
+                department = Department.FINANCE,
                 requiresManagerApproval = null,
                 employeeUsername = "lsimon",
-                contactMethod = TypeHelper.ContactMethod.EMAIL
+                contactMethod = ContactMethod.EMAIL
             )
             val expectedResult = index
             transaction(db){
@@ -77,41 +74,41 @@ class WorkflowServiceTest {
         private fun createChallengeWorkflow() {
             transaction(db) {
                 WorkflowService().addRule(
-                    TypeHelper.Rule(
+                    Rule(
                         employeeUsername = "CMO",
-                        contactMethod = TypeHelper.ContactMethod.EMAIL,
+                        contactMethod = ContactMethod.EMAIL,
                         amountRange = Pair(10000.0, null),
-                        department = TypeHelper.Department.MARKETING
+                        department = Department.MARKETING
                     )
                 )
                 WorkflowService().addRule(
-                    TypeHelper.Rule(
+                    Rule(
                         employeeUsername = "CFO",
-                        contactMethod = TypeHelper.ContactMethod.SLACK,
+                        contactMethod = ContactMethod.SLACK,
                         amountRange = Pair(10000.0, null),
-                        department = TypeHelper.Department.FINANCE
+                        department = Department.FINANCE
                     )
                 )
                 WorkflowService().addRule(
-                    TypeHelper.Rule(
+                    Rule(
                         employeeUsername = "Finance Manager",
-                        contactMethod = TypeHelper.ContactMethod.EMAIL,
+                        contactMethod = ContactMethod.EMAIL,
                         amountRange = Pair(5000.0, 10000.0),
                         requiresManagerApproval = true
                     )
                 )
                 WorkflowService().addRule(
-                    TypeHelper.Rule(
+                    Rule(
                         employeeUsername = "Finance team Member",
-                        contactMethod = TypeHelper.ContactMethod.SLACK,
+                        contactMethod = ContactMethod.SLACK,
                         amountRange = Pair(5000.0, 10000.0),
                         requiresManagerApproval = false
                     )
                 )
                 WorkflowService().addRule(
-                    TypeHelper.Rule(
+                    Rule(
                         employeeUsername = "Finance team Member",
-                        contactMethod = TypeHelper.ContactMethod.SLACK,
+                        contactMethod = ContactMethod.SLACK,
                         amountRange = Pair(null, 5000.0)
                     )
                 )
@@ -122,9 +119,9 @@ class WorkflowServiceTest {
 
             transaction(db) {
             val expectedResult = "Send a message via EMAIL to CMO"
-            val result = WorkflowService().processInvoice(TypeHelper.Invoice(
+            val result = WorkflowService().processInvoice(Invoice(
                 amount = 12000.0,
-                department = TypeHelper.Department.MARKETING,
+                department = Department.MARKETING,
                 requiresManagerApproval = false
             ))
             assertEquals(expectedResult, result)
@@ -136,9 +133,9 @@ class WorkflowServiceTest {
 
             transaction(db) {
                 val expectedResult = "Send a message via SLACK to CFO"
-                val result = WorkflowService().processInvoice(TypeHelper.Invoice(
+                val result = WorkflowService().processInvoice(Invoice(
                     amount = 12000.0,
-                    department = TypeHelper.Department.FINANCE,
+                    department = Department.FINANCE,
                     requiresManagerApproval = true
                 ))
                 assertEquals(expectedResult, result)
@@ -150,9 +147,9 @@ class WorkflowServiceTest {
 
             transaction(db) {
                 val expectedResult = "Send a message via SLACK to Finance team Member"
-                val result = WorkflowService().processInvoice(TypeHelper.Invoice(
+                val result = WorkflowService().processInvoice(Invoice(
                     amount = 400.0,
-                    department = TypeHelper.Department.MARKETING,
+                    department = Department.MARKETING,
                     requiresManagerApproval = false
                 ))
                 assertEquals(expectedResult, result)
@@ -164,9 +161,9 @@ class WorkflowServiceTest {
 
             transaction(db) {
                 val expectedResult = "Send a message via SLACK to Finance team Member"
-                val result = WorkflowService().processInvoice(TypeHelper.Invoice(
+                val result = WorkflowService().processInvoice(Invoice(
                     amount = 7000.0,
-                    department = TypeHelper.Department.MARKETING,
+                    department = Department.MARKETING,
                     requiresManagerApproval = false
                 ))
                 assertEquals(expectedResult, result)
@@ -178,9 +175,9 @@ class WorkflowServiceTest {
 
             transaction(db) {
                 val expectedResult = "Send a message via EMAIL to Finance Manager"
-                val result = WorkflowService().processInvoice(TypeHelper.Invoice(
+                val result = WorkflowService().processInvoice(Invoice(
                     amount = 7000.0,
-                    department = TypeHelper.Department.FINANCE,
+                    department = Department.FINANCE,
                     requiresManagerApproval = true
                 ))
                 assertEquals(expectedResult, result)
@@ -192,9 +189,9 @@ class WorkflowServiceTest {
 
             transaction(db) {
                 val expectedResult = "Send a message via EMAIL to Finance Manager"
-                val result = WorkflowService().processInvoice(TypeHelper.Invoice(
+                val result = WorkflowService().processInvoice(Invoice(
                     amount = 10000.0,
-                    department = TypeHelper.Department.MARKETING,
+                    department = Department.MARKETING,
                     requiresManagerApproval = true
                 ))
                 assertEquals(expectedResult, result)
@@ -206,9 +203,9 @@ class WorkflowServiceTest {
 
             transaction(db) {
                 val expectedResult = "Send a message via SLACK to Finance team Member"
-                val result = WorkflowService().processInvoice(TypeHelper.Invoice(
+                val result = WorkflowService().processInvoice(Invoice(
                     amount = 5000.0,
-                    department = TypeHelper.Department.MARKETING,
+                    department = Department.MARKETING,
                     requiresManagerApproval = true
                 ))
                 assertEquals(expectedResult, result)
