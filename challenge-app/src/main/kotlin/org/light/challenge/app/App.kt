@@ -35,7 +35,7 @@ fun main(args: Array<String>) {
                 return
             } catch (e: Exception){
                 println("Error: Invoice format or argument type is not correct.")
-                println("""   Usage: ./gradlew run --args="--submit-invoice <amount> <department> <managerApproval>"""")
+                println("""   Usage: ./gradlew run --args="--submit-invoice <amount> <department> <manager_approval>"""")
             }
         }
         "--delete-workflow" -> {
@@ -92,6 +92,12 @@ fun main(args: Array<String>) {
                 println("Do you wish to add another rule? [y/n]")
                 if(readln() == "y") continue else break
             }
+        }
+        else -> {
+            println("""Error: Unknown command line argument "${args[0]}". Valid arguments are:""")
+            println("--submit-invoice <amount> <department> <manager_approval>")
+            println("--add-rule-to-workflow")
+            println("--delete-workflow")
         }
     }
 
