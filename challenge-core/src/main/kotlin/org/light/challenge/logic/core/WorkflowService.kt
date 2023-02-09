@@ -7,7 +7,6 @@ import org.jetbrains.exposed.sql.selectAll
 import org.light.challenge.data.*
 
 class WorkflowService {
-    // TODO: placeholder - workflow logic here
 
     private fun addRuleIdToWorkflow(ruleId: Int) {
         WorkflowTable.insert {
@@ -40,6 +39,20 @@ class WorkflowService {
         WorkflowTable.deleteAll()
     }
 
+    fun printWorkflow(){
+        val rules = RulesTable.selectAll().toList()
+        println("${RulesTable.id.name} | ${RulesTable.department.name} | ${RulesTable.minAmount.name} | " +
+                "${RulesTable.maxAmount.name} | ${RulesTable.requiresManagerApproval.name} | " +
+                "${RulesTable.contactMethod.name} | ${RulesTable.employeeUsername.name}")
+        for (rule in rules) {
+            println()
+            println("${rule[RulesTable.id]} | ${rule[RulesTable.department]} | ${rule[RulesTable.minAmount]} | " +
+                    "${rule[RulesTable.maxAmount]} | ${rule[RulesTable.requiresManagerApproval]} | " +
+                    "${rule[RulesTable.contactMethod]} | ${rule[RulesTable.employeeUsername]}")
+            println()
+        }
+    }
+
     fun processInvoice(invoice: Invoice): String {
         val workflow = WorkflowTable.selectAll().toList()
         val ruleIds = workflow.map { it[WorkflowTable.ruleIds] }
@@ -61,6 +74,6 @@ class WorkflowService {
                 return "Send a message via $contactMethod to $employeeUsername"
             }
         }
-        return "None of the rules passed."
+        return "Warning: This invoice did not match with any rule of the workflow. Sending approval request to default employee."
     }
 }

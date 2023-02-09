@@ -30,12 +30,12 @@ fun main(args: Array<String>) {
                     )
                     println(sendInvoiceTo)
                 }
-                return
             } catch (e: Exception){
                 println("Error: Invoice format or argument type is not correct.")
                 println("""   Usage: ./gradlew run --args="--submit-invoice <amount> <department> <manager_approval>"""")
             }
-        }
+            return
+          }
         "--delete-workflow" -> {
             try {
                 transaction(db) {
@@ -49,6 +49,7 @@ fun main(args: Array<String>) {
                 println("Error: Something went wrong. Workflow was not deleted.")
                 println("""   Usage: ./gradlew run --args="--delete-workflow"""")
             }
+            return
         }
         "--add-rule-to-workflow" -> {
             while(true) {
@@ -90,32 +91,24 @@ fun main(args: Array<String>) {
                 println("Do you wish to add another rule? [y/n]")
                 if(readln() == "y") continue else break
             }
+            return
+        }
+        "--print-workflow" -> {
+            try{
+                transaction(db) {
+                    WorkflowService().printWorkflow()
+                }
+            } catch(e:Exception){
+                println("Error: The workflow could not be printed.")
+                println("""   Usage: ./gradlew run --args="--print-workflow"""")
+            }
+            return
         }
         else -> {
             println("""Error: Unknown command line argument "${args[0]}". Valid arguments are:""")
             println("--submit-invoice <amount> <department> <manager_approval>")
             println("--add-rule-to-workflow")
             println("--delete-workflow")
-        }
-    }
-
-      transaction(db) {
-        val rules = RulesTable.selectAll().toList()
-        for (rule in rules) {
-            println("ID: ${rule[RulesTable.id]}")
-            println("Department: ${rule[RulesTable.department]}")
-            println("Min Amount: ${rule[RulesTable.minAmount]}")
-            println("Max Amount: ${rule[RulesTable.maxAmount]}")
-            println("Manager Approval: ${rule[RulesTable.requiresManagerApproval]}")
-            println("Contact Method: ${rule[RulesTable.contactMethod]}")
-            println("Employee username: ${rule[RulesTable.employeeUsername]}")
-            println()
-        }
-
-        val workFlow = WorkflowTable.selectAll().toList()
-        println()
-        for (ruleId in workFlow) {
-            println("RuleId: ${ruleId[WorkflowTable.ruleIds]}")
         }
     }
 }
