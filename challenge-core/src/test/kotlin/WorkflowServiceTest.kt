@@ -1,12 +1,8 @@
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.RepeatedTest
-import org.junit.jupiter.api.TestInstance
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.*
 import java.io.File
 import org.light.challenge.data.*
 import org.light.challenge.logic.core.*
@@ -66,16 +62,32 @@ class WorkflowServiceTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class TestProcessInvoice {
-        init {
+        private fun resetDB(){
             deleteDb()
             createDb()
             createChallengeWorkflow()
+            transaction(db){
+                WorkflowService().generateEmployeeTable()
+            }
+        }
+        init {
+            resetDB()
+        }
+
+        @BeforeEach
+        fun reset(){resetDB()}
+
+        @AfterAll
+        fun deleteEmployeeTable() {
+            transaction(db){
+                WorkflowService().deleteEmployeeTable()
+            }
         }
         private fun createChallengeWorkflow() {
             transaction(db) {
                 WorkflowService().addRule(
                     Rule(
-                        employeeUsername = "CMO",
+                        employeeUsername = "jsanders",
                         contactMethod = ContactMethod.EMAIL,
                         amountRange = Pair(10000.0, null),
                         department = Department.MARKETING
@@ -83,7 +95,7 @@ class WorkflowServiceTest {
                 )
                 WorkflowService().addRule(
                     Rule(
-                        employeeUsername = "CFO",
+                        employeeUsername = "fkozjak",
                         contactMethod = ContactMethod.SLACK,
                         amountRange = Pair(10000.0, null),
                         department = Department.FINANCE
@@ -91,7 +103,7 @@ class WorkflowServiceTest {
                 )
                 WorkflowService().addRule(
                     Rule(
-                        employeeUsername = "Finance Manager",
+                        employeeUsername = "jcop",
                         contactMethod = ContactMethod.EMAIL,
                         amountRange = Pair(5000.0, 10000.0),
                         requiresManagerApproval = true
@@ -99,7 +111,7 @@ class WorkflowServiceTest {
                 )
                 WorkflowService().addRule(
                     Rule(
-                        employeeUsername = "Finance team Member",
+                        employeeUsername = "lsimon",
                         contactMethod = ContactMethod.SLACK,
                         amountRange = Pair(5000.0, 10000.0),
                         requiresManagerApproval = false
@@ -107,18 +119,21 @@ class WorkflowServiceTest {
                 )
                 WorkflowService().addRule(
                     Rule(
-                        employeeUsername = "Finance team Member",
+                        employeeUsername = "meetsoon",
                         contactMethod = ContactMethod.SLACK,
                         amountRange = Pair(null, 5000.0)
                     )
                 )
             }
         }
+
         @Test
         fun `test send EMAIL to CMO`() {
 
             transaction(db) {
-            val expectedResult = "Send a message via EMAIL to CMO"
+            val expectedResult =
+                "EMAIL, Sending approval request for invoice #1 to Jonathan Sanders.\n" +
+                "Email: jonathan@light.inc\nRole: CMO"
             val result = WorkflowService().processInvoice(Invoice(
                 amount = 12000.0,
                 department = Department.MARKETING,
@@ -132,7 +147,9 @@ class WorkflowServiceTest {
         fun `test send SLACK to CFO`() {
 
             transaction(db) {
-                val expectedResult = "Send a message via SLACK to CFO"
+                val expectedResult =
+                    "SLACK, Sending approval request for invoice #1 to Filip Kozjak.\n" +
+                    "Slack user: filip\nRole: CFO"
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 12000.0,
                     department = Department.FINANCE,
@@ -146,7 +163,9 @@ class WorkflowServiceTest {
         fun `test send SLACK to finance Team Member 1`() {
 
             transaction(db) {
-                val expectedResult = "Send a message via SLACK to Finance team Member"
+                val expectedResult =
+                    "SLACK, Sending approval request for invoice #1 to Meet Soon.\n" +
+                    "Slack user: meetsoon\nRole: Finance Member"
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 400.0,
                     department = Department.MARKETING,
@@ -160,7 +179,9 @@ class WorkflowServiceTest {
         fun `test send SLACK to finance Team Member 2`() {
 
             transaction(db) {
-                val expectedResult = "Send a message via SLACK to Finance team Member"
+                val expectedResult =
+                    "SLACK, Sending approval request for invoice #1 to Lluis Simon.\n" +
+                    "Slack user: lluis.simon.92\nRole: Finance Member"
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 7000.0,
                     department = Department.MARKETING,
@@ -174,7 +195,9 @@ class WorkflowServiceTest {
         fun `test send EMAIL to finance Manager`() {
 
             transaction(db) {
-                val expectedResult = "Send a message via EMAIL to Finance Manager"
+                val expectedResult =
+                    "EMAIL, Sending approval request for invoice #1 to Jelena Cop.\n" +
+                    "Email: jelena@light.inc\nRole: Finance Manager"
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 7000.0,
                     department = Department.FINANCE,
@@ -188,7 +211,9 @@ class WorkflowServiceTest {
         fun `test edge case invoice amount 10000`() {
 
             transaction(db) {
-                val expectedResult = "Send a message via EMAIL to Finance Manager"
+                val expectedResult =
+                    "EMAIL, Sending approval request for invoice #1 to Jelena Cop.\n" +
+                    "Email: jelena@light.inc\nRole: Finance Manager"
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 10000.0,
                     department = Department.MARKETING,
@@ -202,7 +227,9 @@ class WorkflowServiceTest {
         fun `test edge case invoice amount 5000`() {
 
             transaction(db) {
-                val expectedResult = "Send a message via SLACK to Finance team Member"
+                val expectedResult =
+                    "SLACK, Sending approval request for invoice #1 to Meet Soon.\n" +
+                    "Slack user: meetsoon\nRole: Finance Member"
                 val result = WorkflowService().processInvoice(Invoice(
                     amount = 5000.0,
                     department = Department.MARKETING,
