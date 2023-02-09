@@ -3,7 +3,6 @@ package org.light.challenge.app
 import org.light.challenge.logic.core.WorkflowService
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.light.challenge.data.*
 import org.light.challenge.logic.core.*
