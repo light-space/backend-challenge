@@ -1,9 +1,6 @@
 package org.light.challenge.logic.core
 
-import org.jetbrains.exposed.sql.deleteAll
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.light.challenge.data.*
 
 class WorkflowService {
@@ -54,25 +51,15 @@ class WorkflowService {
     }
 
     fun processInvoice(invoice: Invoice): String {
-        val workflow = WorkflowTable.selectAll().toList()
-        val ruleIds = workflow.map { it[WorkflowTable.ruleIds] }
+        val matchedRule = RulesTable.select {
+            (RulesTable.department eq invoice.department.name or RulesTable.department.isNull()) and
+            (RulesTable.minAmount less  invoice.amount or RulesTable.minAmount.isNull()) and
+            (RulesTable.maxAmount greaterEq  invoice.amount or RulesTable.maxAmount.isNull()) and
+            (RulesTable.requiresManagerApproval eq invoice.requiresManagerApproval or RulesTable.requiresManagerApproval.isNull())
+        }.firstOrNull()
 
-        for (ruleId in ruleIds) {
-            val rule = RulesTable.select { RulesTable.id eq ruleId }.first()
-            val department = rule[RulesTable.department]?.let { Department.valueOf(it) }
-            val minAmount = rule[RulesTable.minAmount]
-            val maxAmount = rule[RulesTable.maxAmount]
-            val requiresManagementApproval = rule[RulesTable.requiresManagerApproval]
-            val contactMethod = ContactMethod.valueOf(rule[RulesTable.contactMethod])
-            val employeeUsername = rule[RulesTable.employeeUsername]
-
-            if ( (department == null || invoice.department === department) &&
-                 (minAmount == null || invoice.amount > minAmount) &&
-                 (maxAmount == null || invoice.amount <= maxAmount) &&
-                 (requiresManagementApproval == null || invoice.requiresManagerApproval == requiresManagementApproval)
-            ){
-                return "Send a message via $contactMethod to $employeeUsername"
-            }
+        if(matchedRule != null){
+            return "Send a message via ${matchedRule[RulesTable.contactMethod]} to ${matchedRule[RulesTable.employeeUsername]}"
         }
         return "Warning: This invoice did not match with any rule of the workflow. Sending approval request to default employee."
     }
