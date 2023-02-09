@@ -1,6 +1,6 @@
 # Approval workflow challenge SOLUTION
 
-This solution is an implementation of a best-in-class invoice approval workflow application. 
+This solution is an implementation of an invoice approval workflow application. 
 The solution enables customers to configure each step of the approval process and define the workflow in terms of a set of rules. 
 Each rule is responsible for sending an approval request via email or slack to the desired company employee based on one or more constraints.
 
