@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
               --delete-workflow
               --print-workflow
               Usage: ./gradlew run --args="--option arg1 arg2 .... "
-            """
+            """.trimIndent()
         )
         return
     }
@@ -99,7 +99,7 @@ fun main(args: Array<String>) {
                           Require Manager Approval: [true/false]
                           Employee Name: Text
                           Contact Method: [email/slack]
-                        """
+                        """.trimIndent()
                     )
                 }
                 println("Do you wish to add another rule? [y/n]")
@@ -124,7 +124,7 @@ fun main(args: Array<String>) {
                   --add-rule-to-workflow
                   --delete-workflow
                   --print-workflow
-                """"
+                """".trimIndent()
             )
         }
     }
