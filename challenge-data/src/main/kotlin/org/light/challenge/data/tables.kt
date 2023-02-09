@@ -1,6 +1,5 @@
 package org.light.challenge.data
 
-// TODO: placeholder - DB tables here
 import org.jetbrains.exposed.sql.*
 
 object InvoicesTable : Table() {
