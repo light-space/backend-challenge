@@ -10,7 +10,15 @@ import org.light.challenge.logic.core.*
 import java.io.File
 
 fun main(args: Array<String>) {
-
+    if (args.isEmpty()) {
+        println("Error: Please provide arguments. Valid options are")
+        println("  --submit-invoice <amount[Double]> <department[MARKETING/FINANCE]> <manager_approval[Boolean]>")
+        println("  --add-rule-to-workflow")
+        println("  --delete-workflow")
+        println("  --print-workflow")
+        println("""  Usage: ./gradlew run --args="--option arg1 arg2 .... """")
+        return
+    }
     // in-memory DB
     val db = Database.connect("jdbc:sqlite:memory:test?mode=memory&cache=shared", "org.sqlite.JDBC")
 
@@ -105,10 +113,11 @@ fun main(args: Array<String>) {
             return
         }
         else -> {
-            println("""Error: Unknown command line argument "${args[0]}". Valid arguments are:""")
-            println("--submit-invoice <amount> <department> <manager_approval>")
-            println("--add-rule-to-workflow")
-            println("--delete-workflow")
+            println("""Error: Unknown command line option "${args[0]}". Valid options are:""")
+            println("  --submit-invoice <amount[Double]> <department[MARKETING/FINANCE]> <manager_approval[Boolean]>")
+            println("  --add-rule-to-workflow")
+            println("  --delete-workflow")
+            println("  --print-workflow")
         }
     }
 }
